@@ -13,7 +13,7 @@ public:
 	virtual ~EasyScreenCapture() {}
 
 	//截取屏幕，保存为bmp文件
-	virtual StatusCode CaptureScreenAsBmp(const std::string &fileName, const int startX, const int startY, const int width, const int height) {
+	virtual StatusCode CaptureScreenAsBmp(const std::string &fileName, int startX, int startY, int width, int height) {
         return StatusCode::CAPTURE_NO_IMPLEMENT;
     }
 

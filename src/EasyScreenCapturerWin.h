@@ -33,7 +33,7 @@ public:
 	~EasyScreenCaptureWin();
 
 	//截取屏幕，保存为bmp文件
-	StatusCode CaptureScreenAsBmp(const std::string &fileName, const int startX, const int startY, const int width, const int height) override;
+	StatusCode CaptureScreenAsBmp(const std::string &fileName, int startX, int startY, int width, int height) override;
 
 	StatusCode CaptureFullScreenAsBmp(const std::string &fileName) override;
 
@@ -41,8 +41,20 @@ private:
 	// 使用GDI捕获屏幕
 	StatusCode CaptureScreenWithGDI(CaptureBmpData &bmp, const RectPos &rect);
 
+	// 使用D3D9捕获屏幕
+	StatusCode CaptureScreenWithD3D9(CaptureBmpData &bmp, const RectPos &rect);
+
+	// 使用DXGI捕获屏幕
+	StatusCode CaptureScreenWithDXGI(CaptureBmpData &bmp, const RectPos &rect);
+
 	//保存成为文件
 	StatusCode SaveBmpBitsAsFile(const std::string &fileName, const CaptureBmpData &bmp);
+
+    //是否支持DXGI
+    bool m_bSupportDXGI = false;
+
+    //是否支持D3D9
+    bool m_bSupportD3D9 = false;
 };
 
 } // namespace media
