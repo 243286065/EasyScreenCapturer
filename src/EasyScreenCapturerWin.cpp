@@ -1,7 +1,6 @@
 #include "EasyScreenCapturerWin.h"
 #include "CaptureStatusCode.h"
 
-//#include <windef.h>
 #include <windows.h>
 // GDI
 #pragma comment(lib, "user32.lib")
@@ -34,9 +33,10 @@ struct DXGIParams
 	bool m_bInit = false;
 };
 
-EasyScreenCaptureWin::EasyScreenCaptureWin() {
-    m_bSupportDXGI = LoadLibrary("D3D11.dll") && LoadLibrary("DXGI.dll");
-    m_bSupportD3D9 = LoadLibrary("D3D9.dll");
+EasyScreenCaptureWin::EasyScreenCaptureWin()
+{
+	m_bSupportDXGI = LoadLibrary("D3D11.dll") && LoadLibrary("DXGI.dll");
+	m_bSupportD3D9 = LoadLibrary("D3D9.dll");
 }
 EasyScreenCaptureWin::~EasyScreenCaptureWin() {}
 
