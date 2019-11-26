@@ -112,7 +112,7 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithGDI(CaptureBmpData &bmp, cons
 	bitmapInfoHeader.biSize = sizeof(BITMAPINFOHEADER);
 	bitmapInfoHeader.biPlanes = 1;
 	bitmapInfoHeader.biWidth = rect.width;
-	bitmapInfoHeader.biHeight = -abs(rect.height);
+	bitmapInfoHeader.biHeight = -rect.height;
 	bitmapInfoHeader.biBitCount = 32;
 	bitmapInfoHeader.biCompression = BI_RGB;
 	bitmapInfoHeader.biSizeImage = abs(bitmapInfoHeader.biWidth) * abs(bitmapInfoHeader.biHeight) * sizeof(int);
@@ -234,7 +234,7 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithD3D9(CaptureBmpData &bmp, con
 			bitmapInfoHeader.biSize = sizeof(BITMAPINFOHEADER);
 			bitmapInfoHeader.biPlanes = 1;
 			bitmapInfoHeader.biWidth = rect.width;
-			bitmapInfoHeader.biHeight = -abs(rect.height); //获取的图像是上下倒置的，因此这里也要做相应处理
+			bitmapInfoHeader.biHeight = -rect.height; //获取的图像是上下倒置的，因此这里也要做相应处理
 			bitmapInfoHeader.biBitCount = 32;
 			bitmapInfoHeader.biCompression = BI_RGB;
 			bitmapInfoHeader.biSizeImage = abs(bitmapInfoHeader.biWidth) * abs(bitmapInfoHeader.biHeight) * sizeof(int);
@@ -450,7 +450,7 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithDXGI(CaptureBmpData &bmp, con
 		bitmapInfoHeader.biSize = sizeof(BITMAPINFOHEADER);
 		bitmapInfoHeader.biPlanes = 1;
 		bitmapInfoHeader.biWidth = rect.width;
-		bitmapInfoHeader.biHeight = -abs(rect.height); //获取的图像是上下倒置的，因此这里也要做相应处理
+		bitmapInfoHeader.biHeight = -rect.height; //获取的图像是上下倒置的，因此这里也要做相应处理
 		bitmapInfoHeader.biBitCount = 32;
 		bitmapInfoHeader.biCompression = BI_RGB;
 		bitmapInfoHeader.biSizeImage = abs(bitmapInfoHeader.biWidth) * abs(bitmapInfoHeader.biHeight) * sizeof(int);
