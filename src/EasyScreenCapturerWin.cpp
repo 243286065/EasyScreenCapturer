@@ -33,14 +33,14 @@ struct DXGIParams
 	bool m_bInit = false;
 };
 
-EasyScreenCaptureWin::EasyScreenCaptureWin()
+EasyScreenCapturerWin::EasyScreenCapturerWin()
 {
 	m_bSupportDXGI = LoadLibrary("D3D11.dll") && LoadLibrary("DXGI.dll");
 	m_bSupportD3D9 = LoadLibrary("D3D9.dll");
 }
-EasyScreenCaptureWin::~EasyScreenCaptureWin() {}
+EasyScreenCapturerWin::~EasyScreenCapturerWin() {}
 
-StatusCode EasyScreenCaptureWin::CaptureScreenAsBmp(const std::string &fileName, int startX, int startY, int width, int height)
+StatusCode EasyScreenCapturerWin::CaptureScreenAsBmp(const std::string &fileName, uint startX, uint startY, uint width, uint height)
 {
 	const int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 	const int screenHeight = GetSystemMetrics(SM_CYSCREEN);
@@ -92,12 +92,12 @@ StatusCode EasyScreenCaptureWin::CaptureScreenAsBmp(const std::string &fileName,
 	}
 }
 
-StatusCode EasyScreenCaptureWin::CaptureFullScreenAsBmp(const std::string &fileName)
+StatusCode EasyScreenCapturerWin::CaptureFullScreenAsBmp(const std::string &fileName)
 {
 	return CaptureScreenAsBmp(fileName, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
 }
 
-StatusCode EasyScreenCaptureWin::CaptureScreenWithGDI(CaptureBmpData &bmp, const RectPos &rect)
+StatusCode EasyScreenCapturerWin::CaptureScreenWithGDI(CaptureBmpData &bmp, const RectPos &rect)
 {
 	//获取窗口设备上下文
 	HWND pDesktop = GetDesktopWindow();
@@ -167,7 +167,7 @@ StatusCode EasyScreenCaptureWin::CaptureScreenWithGDI(CaptureBmpData &bmp, const
 	}
 }
 
-StatusCode EasyScreenCaptureWin::CaptureScreenWithD3D9(CaptureBmpData &bmp, const RectPos &rect)
+StatusCode EasyScreenCapturerWin::CaptureScreenWithD3D9(CaptureBmpData &bmp, const RectPos &rect)
 {
 	LPDIRECT3DDEVICE9 pD3dDevice = NULL;
 	LPDIRECT3DSURFACE9 pD3dSurface = NULL;
@@ -368,7 +368,7 @@ StatusCode InitDXGI(DXGIParams &params)
 	return StatusCode::CAPTURE_OK;
 }
 
-StatusCode EasyScreenCaptureWin::CaptureScreenWithDXGI(CaptureBmpData &bmp, const RectPos &rect)
+StatusCode EasyScreenCapturerWin::CaptureScreenWithDXGI(CaptureBmpData &bmp, const RectPos &rect)
 {
 	static DXGIParams params;
 	if (!params.m_bInit)
@@ -489,7 +489,7 @@ StatusCode EasyScreenCaptureWin::CaptureScreenWithDXGI(CaptureBmpData &bmp, cons
 	}
 }
 
-StatusCode EasyScreenCaptureWin::SaveBmpBitsAsFile(const std::string &fileName, const CaptureBmpData &bmp)
+StatusCode EasyScreenCapturerWin::SaveBmpBitsAsFile(const std::string &fileName, const CaptureBmpData &bmp)
 {
 	// 创建一个文件来保存文件截图
 	HANDLE hFile = CreateFileA(

@@ -5,29 +5,39 @@
 
 #include <memory>
 
+#ifdef _win32
+#define EXPORT __declspec(dllexport)
+#else
+#define EXPORT
+#endif
+
 namespace media
 {
 
-class __declspec(dllexport) EasyScreenCapture {
+struct RectPos
+{
+	uint x;
+	uint y;
+	uint width;
+	uint height;
+};
+
+class EXPORT EasyScreenCapturer {
 public:
-	virtual ~EasyScreenCapture() {}
+	virtual ~EasyScreenCapturer() {}
 
 	//截取屏幕，保存为bmp文件
-	virtual StatusCode CaptureScreenAsBmp(const std::string &fileName, int startX, int startY, int width, int height) {
-        return StatusCode::CAPTURE_NO_IMPLEMENT;
-    }
+	virtual StatusCode CaptureScreenAsBmp(const std::string &fileName, uint startX, uint startY, uint width, uint height) = 0;
 
-    virtual StatusCode CaptureFullScreenAsBmp(const std::string &fileName) {
-        return StatusCode::CAPTURE_NO_IMPLEMENT;
-    }
+    virtual StatusCode CaptureFullScreenAsBmp(const std::string &fileName) = 0;
 
-	static std::shared_ptr<EasyScreenCapture> GetInstance();
+	static std::shared_ptr<EasyScreenCapturer> GetInstance();
 
 protected:
-	EasyScreenCapture() {}
+	EasyScreenCapturer() {}
 
 private:
-	static std::shared_ptr<EasyScreenCapture> m_pInstance;
+	static std::shared_ptr<EasyScreenCapturer> m_pInstance;
 };
 
 }

@@ -10,14 +10,6 @@
 namespace media
 {
 
-struct RectPos
-{
-	int x;
-	int y;
-	int width;
-	int height;
-};
-
 struct CaptureBmpData
 {
 	LPVOID data;
@@ -26,14 +18,14 @@ struct CaptureBmpData
 	BITMAPINFOHEADER bitmapHeader;
 };
 
-class EasyScreenCaptureWin : public EasyScreenCapture
+class EasyScreenCapturerWin : public EasyScreenCapturer
 {
 public:
-	EasyScreenCaptureWin();
-	~EasyScreenCaptureWin();
+	EasyScreenCapturerWin();
+	~EasyScreenCapturerWin();
 
 	//截取屏幕，保存为bmp文件
-	StatusCode CaptureScreenAsBmp(const std::string &fileName, int startX, int startY, int width, int height) override;
+	StatusCode CaptureScreenAsBmp(const std::string &fileName, uint startX, uint startY, uint width, uint height) override;
 
 	StatusCode CaptureFullScreenAsBmp(const std::string &fileName) override;
 

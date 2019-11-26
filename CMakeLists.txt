@@ -17,6 +17,9 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_OUTPUT_DIR}/bin)
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_OUTPUT_DIR}/lib)
 SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_OUTPUT_DIR}/lib)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(LIBS)
+
 IF (WIN32)
     add_definitions(-DOS_WIN=1)
     set(
@@ -26,6 +29,13 @@ IF (WIN32)
     )
 ELSEIF (UNIX)
     add_definitions(-DOS_UNIX=1)
+    set(
+        PaltformSrc
+        ${PROJECT_SOURCE_DIR}/src/EasyScreenCapturerLinux.h
+        ${PROJECT_SOURCE_DIR}/src/EasyScreenCapturerLinux.cpp
+    )
+    set(LIBS X11)
+ELSE ()
     set(
         PaltformSrc
         ${PROJECT_SOURCE_DIR}/src/EasyScreenCapturerFaker.h
@@ -58,4 +68,4 @@ SET(
 LINK_DIRECTORIES(${LINK_DIR})
 
 ADD_EXECUTABLE(demo ${demoSrc})
-TARGET_LINK_LIBRARIES(demo ${PROJECT_NAME})
+TARGET_LINK_LIBRARIES(demo ${PROJECT_NAME} ${LIBS})

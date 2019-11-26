@@ -2,28 +2,26 @@
 
 #ifdef OS_WIN
 #include "EasyScreenCapturerWin.h"
-#elif define(OS_UNIX)
+#elif defined(OS_UNIX)
+#include "EasyScreenCapturerLinux.h"
 #else
-#include "EasyScreenCaptureFaker.h"
+#include "EasyScreenCapturerFaker.h"
 #endif
 
-namespace media
-{
-std::shared_ptr<EasyScreenCapture> EasyScreenCapture::m_pInstance = nullptr;
+namespace media {
+std::shared_ptr<EasyScreenCapturer> EasyScreenCapturer::m_pInstance = nullptr;
 
-std::shared_ptr<EasyScreenCapture> EasyScreenCapture::GetInstance()
-{
-	if (!m_pInstance)
-	{
+std::shared_ptr<EasyScreenCapturer> EasyScreenCapturer::GetInstance() {
+  if (!m_pInstance) {
 #ifdef OS_WIN
-		m_pInstance.reset(new EasyScreenCaptureWin());
-#elif define OS_UNIX
-		//m_pInstance.reset(new EasyScreenCaptureFaker());
+    m_pInstance.reset(new EasyScreenCapturerWin());
+#elif defined(OS_UNIX)
+    m_pInstance.reset(new EasyScreenCapturerLinux());
 #else
-	m_pInstance.reset(new EasyScreenCapture());
+    m_pInstance.reset(new EasyScreenCapturerFaker());
 #endif
-	}
+  }
 
-	return m_pInstance;
+  return m_pInstance;
 }
-} // namespace media
+}  // namespace media
