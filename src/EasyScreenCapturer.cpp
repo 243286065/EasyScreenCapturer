@@ -8,11 +8,14 @@
 #include "EasyScreenCapturerFaker.h"
 #endif
 
-namespace media {
+namespace media
+{
 std::shared_ptr<EasyScreenCapturer> EasyScreenCapturer::m_pInstance = nullptr;
 
-std::shared_ptr<EasyScreenCapturer> EasyScreenCapturer::GetInstance() {
-  if (!m_pInstance) {
+std::shared_ptr<EasyScreenCapturer> EasyScreenCapturer::GetInstance()
+{
+  if (!m_pInstance)
+  {
 #ifdef OS_WIN
     m_pInstance.reset(new EasyScreenCapturerWin());
 #elif defined(OS_UNIX)
@@ -24,4 +27,4 @@ std::shared_ptr<EasyScreenCapturer> EasyScreenCapturer::GetInstance() {
 
   return m_pInstance;
 }
-}  // namespace media
+} // namespace media

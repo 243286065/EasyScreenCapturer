@@ -3,21 +3,12 @@
 
 #include "EasyScreenCapturer.h"
 
-#include <windows.h>
 #include <memory>
 #include <string>
+#include <windows.h>
 
 namespace media
 {
-
-struct CaptureBmpData
-{
-	LPVOID data;
-	int len;
-	bool free = true;
-	BITMAPINFOHEADER bitmapHeader;
-};
-
 class EasyScreenCapturerWin : public EasyScreenCapturer
 {
 public:
@@ -42,11 +33,16 @@ private:
 	//保存成为文件
 	StatusCode SaveBmpBitsAsFile(const std::string &fileName, const CaptureBmpData &bmp);
 
-    //是否支持DXGI
-    bool m_bSupportDXGI = false;
+	//是否支持DXGI
+	bool m_bSupportDXGI = false;
 
-    //是否支持D3D9
-    bool m_bSupportD3D9 = false;
+	//是否支持D3D9
+	bool m_bSupportD3D9 = false;
+
+	//屏幕分辨率
+	int m_screenWidth = 0;
+	int m_screenHeight = 0;
+	bool m_bScreenChange = false;
 };
 
 } // namespace media
