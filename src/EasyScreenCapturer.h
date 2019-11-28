@@ -21,7 +21,7 @@ namespace media
 
 #ifdef OS_WIN
 typedef unsigned int uint;
-#elif
+#else
 typedef uint16_t WORD;
 typedef uint32_t DWORD;
 typedef int32_t LONG;
