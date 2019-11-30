@@ -422,8 +422,9 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithDXGI(CaptureBmpData &bmp, con
 	IDXGIResource *pDesktopResource = NULL;
 	DXGI_OUTDUPL_FRAME_INFO frameInfo;
 	HRESULT hr = params.m_hDeskDupl->AcquireNextFrame(500, &frameInfo, &pDesktopResource);
-    //DXGI初始化后的第一帧很可能是空白状态，这里要去除掉
-    if (frameInfo.TotalMetadataBufferSize == 0) {
+    //DXGI初始化后的第一帧很可能是空白状态，这里要去除掉;尝试十次
+    int cntTry = 0;
+    while (frameInfo.TotalMetadataBufferSize == 0 && cntTry++ < 10) {
         RELEASE_RESOURCE(pDesktopResource);
         params.m_hDeskDupl->ReleaseFrame();
         hr = params.m_hDeskDupl->AcquireNextFrame(500, &frameInfo, &pDesktopResource);
