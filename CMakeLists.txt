@@ -52,7 +52,7 @@ set(
 )
 
 # 指定生成目标
-add_library(${PROJECT_NAME} SHARED ${Src})
+add_library(${PROJECT_NAME} ${Src})
 
 SET(
     demoSrc
