@@ -20,6 +20,8 @@ public:
 
 	StatusCode CaptureFullScreenAsBmp(const std::string &fileName) override;
 
+	StatusCode CaptureScreen(CaptureBmpData& bmp, uint startX, uint startY, uint width, uint height) override;
+
 private:
 	// 使用GDI捕获屏幕
 	StatusCode CaptureScreenWithGDI(CaptureBmpData &bmp, const RectPos &rect);

@@ -17,7 +17,7 @@ StatusCode EasyScreenCapturerLinux::CaptureScreenAsBmp(
     uint height)
 {
   CaptureBmpData bmp;
-  auto res = CaptureScreenWithX11(bmp, {startX, startY, width, height});
+  auto res = CaptureScreen(bmp, startX, startY, width, height);
   if (res != StatusCode::CAPTURE_OK)
   {
     return res;
@@ -39,6 +39,11 @@ StatusCode EasyScreenCapturerLinux::CaptureFullScreenAsBmp(
     const std::string &fileName)
 {
   return CaptureScreenAsBmp(fileName, 0, 0, 0, 0);
+}
+
+StatusCode EasyScreenCapturerLinux::CaptureScreen(CaptureBmpData& bmp, uint startX, uint startY, uint width, uint height)
+{
+  return CaptureScreenWithX11(bmp, {startX, startY, width, height});
 }
 
 // 使用x11捕获屏幕

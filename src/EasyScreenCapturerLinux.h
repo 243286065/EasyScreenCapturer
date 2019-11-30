@@ -22,6 +22,8 @@ public:
 
   StatusCode CaptureFullScreenAsBmp(const std::string &fileName) override;
 
+  StatusCode CaptureScreen(CaptureBmpData& bmp, uint startX, uint startY, uint width, uint height) override;
+
 private:
   // 使用x11捕获屏幕
   StatusCode CaptureScreenWithX11(CaptureBmpData &bmp, const RectPos &rect);

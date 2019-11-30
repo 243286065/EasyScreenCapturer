@@ -13,6 +13,8 @@ public:
 	StatusCode CaptureScreenAsBmp(const std::string &fileName, uint startX, uint startY, uint width, uint height) override {}
 
 	StatusCode CaptureFullScreenAsBmp(const std::string &fileName) override {}
+
+	StatusCode CaptureScreen(CaptureBmpData& bmp, uint startX, uint startY, uint width, uint height) override {}
 };
 
 } // namespace media

@@ -44,52 +44,9 @@ EasyScreenCapturerWin::~EasyScreenCapturerWin() {}
 
 StatusCode EasyScreenCapturerWin::CaptureScreenAsBmp(const std::string &fileName, uint startX, uint startY, uint width, uint height)
 {
-	const int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-	const int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-
-	if (screenWidth != m_screenWidth || screenHeight != m_screenHeight)
-	{
-		m_bScreenChange = true;
-		m_screenWidth = screenWidth;
-		m_screenHeight = screenHeight;
-	}
-	else
-	{
-		m_bScreenChange = false;
-	}
-
-	if (startX < 0 || startY < 0 || startX >= screenWidth || startY >= screenHeight || width <= 0 || height <= 0)
-	{
-		return StatusCode::CAPTURE_INVALID_PARAMETER;
-	}
-
-	if (startX + width > screenWidth)
-	{
-		width = screenWidth - startX;
-	}
-
-	if (startY + height > screenHeight)
-	{
-		height = screenHeight - startY;
-	}
-
 	CaptureBmpData bmp;
-	StatusCode res;
-	if (m_bSupportDXGI)
-	{
-		//支持DXGI
-		res = CaptureScreenWithDXGI(bmp, {startX, startY, width, height});
-	}
-	else if (m_bSupportD3D9)
-	{
-		//支持D3D9
-		res = CaptureScreenWithD3D9(bmp, {startX, startY, width, height});
-	}
-	else
-	{
-		res = CaptureScreenWithGDI(bmp, {startX, startY, width, height});
-	}
-
+	StatusCode res = CaptureScreen(bmp, startX, startY, width, height);
+	
 	if (res != StatusCode::CAPTURE_OK)
 	{
 		return res;
@@ -177,6 +134,56 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithGDI(CaptureBmpData &bmp, cons
 	{
 		return StatusCode::CAPTURE_OK;
 	}
+}
+
+StatusCode EasyScreenCapturerWin::CaptureScreen(CaptureBmpData& bmp, uint startX, uint startY, uint width, uint height)
+{
+	const int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+	const int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+	if (screenWidth != m_screenWidth || screenHeight != m_screenHeight)
+	{
+		m_bScreenChange = true;
+		m_screenWidth = screenWidth;
+		m_screenHeight = screenHeight;
+	}
+	else
+	{
+		m_bScreenChange = false;
+	}
+
+	if (startX < 0 || startY < 0 || startX >= screenWidth || startY >= screenHeight || width <= 0 || height <= 0)
+	{
+		return StatusCode::CAPTURE_INVALID_PARAMETER;
+	}
+
+	if (startX + width > screenWidth)
+	{
+		width = screenWidth - startX;
+	}
+
+	if (startY + height > screenHeight)
+	{
+		height = screenHeight - startY;
+	}
+
+	StatusCode res;
+	if (m_bSupportDXGI)
+	{
+		//支持DXGI
+		res = CaptureScreenWithDXGI(bmp, {startX, startY, width, height});
+	}
+	else if (m_bSupportD3D9)
+	{
+		//支持D3D9
+		res = CaptureScreenWithD3D9(bmp, {startX, startY, width, height});
+	}
+	else
+	{
+		res = CaptureScreenWithGDI(bmp, {startX, startY, width, height});
+	}
+
+	return res;
 }
 
 StatusCode EasyScreenCapturerWin::CaptureScreenWithD3D9(CaptureBmpData &bmp, const RectPos &rect)

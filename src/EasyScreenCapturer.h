@@ -93,6 +93,9 @@ public:
 	//全屏截图，保存为bmp文件
 	virtual StatusCode CaptureFullScreenAsBmp(const std::string &fileName) = 0;
 
+	//截图,保存在内存中
+	virtual StatusCode CaptureScreen(CaptureBmpData& bmp, uint startX, uint startY, uint width, uint height) = 0;
+
 	static std::shared_ptr<EasyScreenCapturer> GetInstance();
 
 protected:
