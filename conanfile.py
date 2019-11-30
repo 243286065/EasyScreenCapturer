@@ -23,6 +23,7 @@ class LzstringcppConan(ConanFile):
 
     def build(self):
         cmake = CMake(self)
+        cmake.definitions['NO_BUILD_DEMO'] = True
         cmake.configure(source_folder="EasyScreenCapturer")
         cmake.build()
 

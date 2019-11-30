@@ -5,12 +5,12 @@
 
 #include <memory>
 
-#ifdef OS_WIN
+#ifdef _WIN32
 #include <windows.h>
 #endif
 
 
-#ifdef OS_WIN
+#ifdef _WIN32
 #define EXPORT __declspec(dllexport)
 #else
 #define EXPORT
@@ -19,7 +19,7 @@
 namespace media
 {
 
-#ifdef OS_WIN
+#ifdef _WIN32
 typedef unsigned int uint;
 #else
 typedef uint16_t WORD;

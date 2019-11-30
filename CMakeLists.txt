@@ -67,5 +67,8 @@ SET(
 
 LINK_DIRECTORIES(${LINK_DIR})
 
-ADD_EXECUTABLE(demo ${demoSrc})
-TARGET_LINK_LIBRARIES(demo ${PROJECT_NAME} ${LIBS})
+if(${NO_BUILD_DEMO})
+else()
+    ADD_EXECUTABLE(demo ${demoSrc})
+    TARGET_LINK_LIBRARIES(demo ${PROJECT_NAME} ${LIBS})
+endif()
