@@ -28,7 +28,8 @@ class LzstringcppConan(ConanFile):
         cmake.build()
 
     def package(self):
-        self.copy("EasyScreenCapturer.h", dst="include", src="EasyScreenCapturer/src")
+        self.copy("EasyScreenCapturer.h", dst="include/EasyScreenCapturer", src="EasyScreenCapturer/src")
+        self.copy("CaptureStatusCode.h", dst="include/EasyScreenCapturer", src="EasyScreenCapturer/src")
         self.copy("*.lib", dst="lib", keep_path=False)
         self.copy("*.dll", dst="bin", keep_path=False)
         self.copy("*.so", dst="lib", keep_path=False)
