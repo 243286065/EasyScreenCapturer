@@ -24,6 +24,8 @@ public:
 
   StatusCode CaptureScreen(CaptureBmpData& bmp, uint startX, uint startY, uint width, uint height) override;
 
+  StatusCode CaptureFullScreen(CaptureBmpData& bmp) override;
+
 private:
   // 使用x11捕获屏幕
   StatusCode CaptureScreenWithX11(CaptureBmpData &bmp, const RectPos &rect);

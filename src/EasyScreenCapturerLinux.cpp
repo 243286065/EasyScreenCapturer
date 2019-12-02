@@ -46,6 +46,11 @@ StatusCode EasyScreenCapturerLinux::CaptureScreen(CaptureBmpData& bmp, uint star
   return CaptureScreenWithX11(bmp, {startX, startY, width, height});
 }
 
+StatusCode EasyScreenCapturerLinux::CaptureFullScreen(CaptureBmpData& bmp)
+{
+  return CaptureScreen(bmp, 0, 0, 0, 0);
+}
+
 // 使用x11捕获屏幕
 StatusCode EasyScreenCapturerLinux::CaptureScreenWithX11(CaptureBmpData &bmp,
                                                          const RectPos &rect)

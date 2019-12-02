@@ -95,6 +95,7 @@ public:
 
 	//截图,保存在内存中
 	virtual StatusCode CaptureScreen(CaptureBmpData& bmp, uint startX, uint startY, uint width, uint height) = 0;
+	virtual StatusCode CaptureFullScreen(CaptureBmpData& bmp) = 0;
 
 	static std::shared_ptr<EasyScreenCapturer> GetInstance();
 
