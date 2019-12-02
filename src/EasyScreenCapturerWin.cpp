@@ -56,8 +56,7 @@ StatusCode EasyScreenCapturerWin::CaptureScreenAsBmp(const std::string &fileName
 		//保存到文件
 		res = SaveBmpBitsAsFile(fileName, bmp);
 		//释放
-		free(bmp.m_pixels);
-		bmp.free = true;
+		FreeCaptureBmpData(bmp);
 		return res;
 	}
 }
@@ -148,10 +147,7 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithGDI(CaptureBmpData &bmp, cons
 	bitmapInfoHeader.biClrImportant = 0;
 
 	//缓冲区
-	if (!bmp.free)
-	{
-		free(bmp.m_pixels);
-	}
+	FreeCaptureBmpData(bmp);
 
 	bmp.m_pixels = (uint8_t *)malloc(bitmapInfoHeader.biSizeImage);
 	if (!bmp.m_pixels)
@@ -161,6 +157,7 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithGDI(CaptureBmpData &bmp, cons
 		DeleteObject(bitmap);
 		return StatusCode::CAPTURE_ALLOC_FAILED;
 	}
+	bmp.m_free = false;
 	ZeroMemory(bmp.m_pixels, bitmapInfoHeader.biSizeImage);
 
 	//替换目标设备中的位图对象
@@ -182,8 +179,7 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithGDI(CaptureBmpData &bmp, cons
 
 	if (res == 0)
 	{
-		free(bmp.m_pixels);
-		bmp.free = true;
+		FreeCaptureBmpData(bmp);
 		return StatusCode::CAPTURE_GET_DIBITS_FAILED;
 	}
 	else
@@ -275,6 +271,7 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithD3D9(CaptureBmpData &bmp, con
 			}
 			else
 			{
+				bmp.m_free = false;
 				ZeroMemory(bmp.m_pixels, bitmapInfoHeader.biSizeImage);
 				D3DLOCKED_RECT lockedRect;
 				RECT screenRect = {0, 0, 0, 0};
@@ -524,6 +521,7 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithDXGI(CaptureBmpData &bmp, con
 		}
 		else
 		{
+			bmp.m_free = false;
 			ZeroMemory(bmp.m_pixels, bitmapInfoHeader.biSizeImage);
 			auto windowPos = params.m_dxgiOutDesc.DesktopCoordinates;
 			switch (params.m_dxgiOutDesc.Rotation)

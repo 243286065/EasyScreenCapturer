@@ -25,12 +25,7 @@ StatusCode EasyScreenCapturerLinux::CaptureScreenAsBmp(
 
   //保存文件
   res = SaveBmpBitsAsFile(fileName, bmp);
-  if (!bmp.free)
-  {
-    free(bmp.m_pixels);
-    bmp.m_pixels = NULL;
-    bmp.free = true;
-  }
+  FreeCaptureBmpData(bmp);
 
   return res;
 }
@@ -111,12 +106,10 @@ StatusCode EasyScreenCapturerLinux::CaptureScreenWithX11(CaptureBmpData &bmp,
   bmp.m_headerInfo.biClrUsed = 0;
   bmp.m_headerInfo.biClrImportant = 0;
 
-  if (!bmp.free)
-  {
-    free(bmp.m_pixels);
-  }
-  bmp.free = false;
+  FreeCaptureBmpData(bmp);
   bmp.m_pixels = (uint8_t *)malloc(bmp.m_headerInfo.biSizeImage * sizeof(int));
+  bmp.m_free = false;
+
   memcpy(bmp.m_pixels, img->data, bmp.m_headerInfo.biSizeImage);
   XDestroyImage(img);
   XCloseDisplay(display);

@@ -70,7 +70,7 @@ biSizeImage=biWidth’ × biHeight
 struct CaptureBmpData
 {
 	uint8_t *m_pixels;
-	bool free = true;
+	bool m_free = true;
 	BITMAPINFOHEADER m_headerInfo;
 };
 
@@ -96,6 +96,8 @@ public:
 	//截图,保存在内存中
 	virtual StatusCode CaptureScreen(CaptureBmpData& bmp, uint startX, uint startY, uint width, uint height) = 0;
 	virtual StatusCode CaptureFullScreen(CaptureBmpData& bmp) = 0;
+
+	virtual void FreeCaptureBmpData(CaptureBmpData& bmp);
 
 	static std::shared_ptr<EasyScreenCapturer> GetInstance();
 

@@ -27,4 +27,14 @@ std::shared_ptr<EasyScreenCapturer> EasyScreenCapturer::GetInstance()
 
   return m_pInstance;
 }
+
+void EasyScreenCapturer::FreeCaptureBmpData(CaptureBmpData& bmp)
+{
+  if(!bmp.m_free)
+  {
+    free(bmp.m_pixels);
+    bmp.m_pixels = NULL;
+    bmp.m_free = true;
+  }
+}
 } // namespace media
