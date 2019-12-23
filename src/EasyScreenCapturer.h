@@ -68,7 +68,7 @@ biSizeImage=biWidth’ × biHeight
 };
 #endif
 
-struct CaptureBmpData
+struct EXPORT CaptureBmpData
 {
 	std::shared_ptr<uint8_t> m_pixels = nullptr;
 	BITMAPINFOHEADER m_headerInfo;
