@@ -55,8 +55,6 @@ StatusCode EasyScreenCapturerWin::CaptureScreenAsBmp(const std::string &fileName
 	{
 		//保存到文件
 		res = SaveBmpBitsAsFile(fileName, bmp);
-		//释放
-		FreeCaptureBmpData(bmp);
 		return res;
 	}
 }
@@ -147,9 +145,7 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithGDI(CaptureBmpData &bmp, cons
 	bitmapInfoHeader.biClrImportant = 0;
 
 	//缓冲区
-	FreeCaptureBmpData(bmp);
-
-	bmp.m_pixels = (uint8_t *)malloc(bitmapInfoHeader.biSizeImage);
+    bmp.malloc(bitmapInfoHeader.biSizeImage);
 	if (!bmp.m_pixels)
 	{
 		ReleaseDC(pDesktop, winDc);
@@ -157,8 +153,7 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithGDI(CaptureBmpData &bmp, cons
 		DeleteObject(bitmap);
 		return StatusCode::CAPTURE_ALLOC_FAILED;
 	}
-	bmp.m_free = false;
-	ZeroMemory(bmp.m_pixels, bitmapInfoHeader.biSizeImage);
+    bmp.MemsetZero();
 
 	//替换目标设备中的位图对象
 	HBITMAP oldBitMap = (HBITMAP)SelectObject(memoryDc, bitmap);
@@ -171,7 +166,7 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithGDI(CaptureBmpData &bmp, cons
 		return StatusCode::CAPTURE_ERROR_BITBIT;
 	}
 	//获取指定兼容位图的位，然后将其作一个DIB—设备无关位图（Device-Independent Bitmap）使用的指定格式复制到一个缓冲区中
-	int res = GetDIBits(winDc, bitmap, 0, rect.height, bmp.m_pixels, (PBITMAPINFO)&bitmapInfoHeader, DIB_RGB_COLORS); //获取bmp信息
+	int res = GetDIBits(winDc, bitmap, 0, rect.height, bmp.m_pixels.get(), (PBITMAPINFO)&bitmapInfoHeader, DIB_RGB_COLORS); //获取bmp信息
 
 	ReleaseDC(pDesktop, winDc);
 	DeleteDC(memoryDc);
@@ -179,7 +174,6 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithGDI(CaptureBmpData &bmp, cons
 
 	if (res == 0)
 	{
-		FreeCaptureBmpData(bmp);
 		return StatusCode::CAPTURE_GET_DIBITS_FAILED;
 	}
 	else
@@ -264,15 +258,14 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithD3D9(CaptureBmpData &bmp, con
 			bitmapInfoHeader.biClrUsed = 0;
 			bitmapInfoHeader.biClrImportant = 0;
 
-			bmp.m_pixels = (uint8_t *)malloc(bitmapInfoHeader.biSizeImage);
+			bmp.malloc(bitmapInfoHeader.biSizeImage);
 			if (!bmp.m_pixels)
 			{
 				res = StatusCode::CAPTURE_ALLOC_FAILED;
 			}
 			else
 			{
-				bmp.m_free = false;
-				ZeroMemory(bmp.m_pixels, bitmapInfoHeader.biSizeImage);
+                bmp.MemsetZero();
 				D3DLOCKED_RECT lockedRect;
 				RECT screenRect = {0, 0, 0, 0};
 				screenRect.left = rect.x;
@@ -287,7 +280,7 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithD3D9(CaptureBmpData &bmp, con
 				{
 					for (int i = 0; i < rect.height; i++)
 					{
-						memcpy((BYTE *)bmp.m_pixels + i * rect.width * sizeof(int), (BYTE *)lockedRect.pBits + i * lockedRect.Pitch, rect.width * sizeof(int));
+						memcpy((BYTE *)bmp.m_pixels.get() + i * rect.width * sizeof(int), (BYTE *)lockedRect.pBits + i * lockedRect.Pitch, rect.width * sizeof(int));
 					}
 					res = StatusCode::CAPTURE_OK;
 				}
@@ -513,7 +506,7 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithDXGI(CaptureBmpData &bmp, con
 		bitmapInfoHeader.biClrUsed = 0;
 		bitmapInfoHeader.biClrImportant = 0;
 
-		bmp.m_pixels = (uint8_t *)malloc(bitmapInfoHeader.biSizeImage);
+        bmp.malloc(bitmapInfoHeader.biSizeImage);
 		StatusCode res;
 		if (!bmp.m_pixels)
 		{
@@ -521,8 +514,7 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithDXGI(CaptureBmpData &bmp, con
 		}
 		else
 		{
-			bmp.m_free = false;
-			ZeroMemory(bmp.m_pixels, bitmapInfoHeader.biSizeImage);
+            bmp.MemsetZero();
 			auto windowPos = params.m_dxgiOutDesc.DesktopCoordinates;
 			switch (params.m_dxgiOutDesc.Rotation)
 			{
@@ -531,7 +523,7 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithDXGI(CaptureBmpData &bmp, con
 				//直接拷贝
 				for (int i = 0; i < rect.height; i++)
 				{
-					memcpy((BYTE *)bmp.m_pixels + i * rect.width * sizeof(int), (BYTE *)mappedRect.pBits + (i + rect.y) * mappedRect.Pitch + rect.x, rect.width * sizeof(int));
+					memcpy((BYTE *)bmp.m_pixels.get() + i * rect.width * sizeof(int), (BYTE *)mappedRect.pBits + (i + rect.y) * mappedRect.Pitch + rect.x, rect.width * sizeof(int));
 				}
 			}
 			break;
@@ -545,7 +537,7 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithDXGI(CaptureBmpData &bmp, con
 						//获取的屏幕宽度为正常模式下的高度，高度为正常模式下的宽度
 						//映射坐标(x,y)-->(y, winWidth - x - 1)
 						//加上窗口偏移量后(x,y)-->(y + rect.y, winWidth - x - rect.x - 1)
-						memcpy((BYTE *)bmp.m_pixels + (j * rect.width + i) * sizeof(int), (BYTE *)mappedRect.pBits + ((windowPos.right - i - 1 - rect.x) * windowPos.bottom + j + rect.y) * sizeof(int), sizeof(int));
+						memcpy((BYTE *)bmp.m_pixels.get() + (j * rect.width + i) * sizeof(int), (BYTE *)mappedRect.pBits + ((windowPos.right - i - 1 - rect.x) * windowPos.bottom + j + rect.y) * sizeof(int), sizeof(int));
 					}
 				}
 			}
@@ -560,7 +552,7 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithDXGI(CaptureBmpData &bmp, con
 						//获取的屏幕宽高为正常模式的宽高
 						//映射坐标(x,y)-->(winWidth - x -1, winHeight - y - 1)
 						//加上窗口偏移量后(x,y)->(winWidth-x-rect.x -1, winHeight-y-rect.y-1)
-						memcpy((BYTE *)bmp.m_pixels + (j * rect.width + i) * sizeof(int), (BYTE *)mappedRect.pBits + ((windowPos.bottom - j - 1 - rect.y) * windowPos.right + windowPos.right - i - rect.x - 1) * sizeof(int), sizeof(int));
+						memcpy((BYTE *)bmp.m_pixels.get() + (j * rect.width + i) * sizeof(int), (BYTE *)mappedRect.pBits + ((windowPos.bottom - j - 1 - rect.y) * windowPos.right + windowPos.right - i - rect.x - 1) * sizeof(int), sizeof(int));
 					}
 				}
 			}
@@ -575,7 +567,7 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithDXGI(CaptureBmpData &bmp, con
 						//获取的屏幕宽度为正常模式下的高度，高度为正常模式下的宽度
 						//映射坐标(x,y)-->(winWidth - y - 1, x)
 						//加上窗口偏移量后(x,y)->(winWidth - y - 1 - rect.y , x + rect.x)
-						memcpy((BYTE *)bmp.m_pixels + (j * rect.width + i) * sizeof(int), (BYTE *)mappedRect.pBits + ((i + rect.x) * windowPos.bottom + windowPos.bottom - j - rect.y - 1) * sizeof(int), sizeof(int));
+						memcpy((BYTE *)bmp.m_pixels.get() + (j * rect.width + i) * sizeof(int), (BYTE *)mappedRect.pBits + ((i + rect.x) * windowPos.bottom + windowPos.bottom - j - rect.y - 1) * sizeof(int), sizeof(int));
 					}
 				}
 			}
@@ -618,7 +610,7 @@ StatusCode EasyScreenCapturerWin::SaveBmpBitsAsFile(const std::string &fileName,
 	DWORD dwWriten;
 	WriteFile(hFile, &bmpFileHeader, sizeof(BITMAPFILEHEADER), &dwWriten, NULL);
 	WriteFile(hFile, &bmp.m_headerInfo, sizeof(BITMAPINFOHEADER), &dwWriten, NULL);
-	WriteFile(hFile, bmp.m_pixels, bmp.m_headerInfo.biSizeImage, &dwWriten, NULL);
+	WriteFile(hFile, bmp.m_pixels.get(), bmp.m_headerInfo.biSizeImage, &dwWriten, NULL);
 	CloseHandle(hFile);
 
 	return StatusCode::CAPTURE_OK;

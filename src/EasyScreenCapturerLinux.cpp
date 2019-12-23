@@ -106,11 +106,10 @@ StatusCode EasyScreenCapturerLinux::CaptureScreenWithX11(CaptureBmpData &bmp,
   bmp.m_headerInfo.biClrUsed = 0;
   bmp.m_headerInfo.biClrImportant = 0;
 
-  FreeCaptureBmpData(bmp);
-  bmp.m_pixels = (uint8_t *)malloc(bmp.m_headerInfo.biSizeImage * sizeof(int));
-  bmp.m_free = false;
+  bmp.malloc(bmp.m_headerInfo.biSizeImage);
+  bmp.MemsetZero();
 
-  memcpy(bmp.m_pixels, img->data, bmp.m_headerInfo.biSizeImage);
+  memcpy(bmp.m_pixels.get(), img->data, bmp.m_headerInfo.biSizeImage);
   XDestroyImage(img);
   XCloseDisplay(display);
   return StatusCode::CAPTURE_OK;

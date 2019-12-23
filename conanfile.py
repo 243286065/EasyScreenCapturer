@@ -3,7 +3,7 @@ from conans import ConanFile, CMake, tools
 
 class LzstringcppConan(ConanFile):
     name = "EasyScreenCapturer"
-    version = "1.0.1"
+    version = "1.0.2"
     license = "MIT"
     author = "xl"
     url = "https://github.com/243286065/EasyScreenCapturer"
