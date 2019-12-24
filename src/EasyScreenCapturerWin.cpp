@@ -400,7 +400,7 @@ void ReleaseDXGIResource(DXGIParams &params)
 StatusCode EasyScreenCapturerWin::CaptureScreenWithDXGI(CaptureBmpData &bmp, const RectPos &rect)
 {
 	static DXGIParams params;
-	if (m_bScreenChange)
+	if (m_bScreenChange || !params.m_bInit)
 	{
 		if (params.m_bInit)
 		{
@@ -427,11 +427,13 @@ StatusCode EasyScreenCapturerWin::CaptureScreenWithDXGI(CaptureBmpData &bmp, con
     }
 	if (hr == DXGI_ERROR_WAIT_TIMEOUT)
 	{
+        //当桌面没有变化时，win10上可能会因为系统优化出现超时
 		return StatusCode::CAPTURE_D3D_FRAME_NOCHANGE;
 	}
 	else if (FAILED(hr))
 	{
-		//当桌面没有变化时，win10上可能会因为系统优化出现超时
+        // 重新初始化
+        ReleaseDXGIResource(params);
 		return StatusCode::CAPTURE_D3D_DXGI_ACQUIRE_NEXT_FRAME_FAILED;
 	}
 

@@ -78,6 +78,7 @@ struct EXPORT CaptureBmpData
     {
         m_dataLen = len;
         m_pixels = std::shared_ptr<uint8_t>(new uint8_t[m_dataLen], std::default_delete<uint8_t[]>());
+        MemsetZero();
     }
 
     void MemsetZero()
