@@ -25,8 +25,6 @@ StatusCode EasyScreenCapturerLinux::CaptureScreenAsBmp(
 
   //保存文件
   res = SaveBmpBitsAsFile(fileName, bmp);
-  FreeCaptureBmpData(bmp);
-
   return res;
 }
 
@@ -131,7 +129,7 @@ StatusCode EasyScreenCapturerLinux::SaveBmpBitsAsFile(
   uint32_t dwWriten;
   fwrite(&bmpFileHeader, sizeof(char), sizeof(BITMAPFILEHEADER), outfile);
   fwrite(&bmp.m_headerInfo, sizeof(char), sizeof(BITMAPINFOHEADER), outfile);
-  fwrite(bmp.m_pixels, sizeof(char), bmp.m_headerInfo.biSizeImage, outfile);
+  fwrite(bmp.m_pixels.get(), sizeof(char), bmp.m_headerInfo.biSizeImage, outfile);
   fclose(outfile);
   outfile = NULL;
   return StatusCode::CAPTURE_OK;
